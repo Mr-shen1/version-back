@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.skf.dao.mapper.ChannelRootRulesPOMapper">
+
+    <select id="queryChannelRootRulesPO" resultType="com.skf.dao.po.ChannelRootRulesPO">
+        select *
+        from t_channel_root_rules
+        <where>
+            <if test="version != null and version != ''">
+                version = #{version}
+            </if>
+            and delete_flag = 'N';
+        </where>
+
+    </select>
+
+    <update id="updateChannelRootRulesPO">
+        update t_channel_root_rules
+        set username = #{username}, password = #{password}, delete_flag = #{deleteFlag}
+        where tid = #{tid}
+    </update>
+    <insert id="addChannelRootRulesPO">
+        insert into t_channel_root_rules
+        (tid, username, password, delete_flag)
+        values (null, #{username}, #{password}, 'N');
+    </insert>
+
+
+    <select id="queryLastVersion" resultType="java.lang.String">
+        select version
+        from t_channel_root_rules
+        order by version desc
+        limit 1
+    </select>
+
+
+    <insert id="addChannelRootRulesPos">
+        insert into t_channel_root_rules values
+            <foreach collection="list" item="rule" separator=",">
+                (null, #{rule.username}, #{rule.password}, #{version}, #{rule.deleteFlag})
+            </foreach>
+    </insert>
+
+
+
+    <insert id="addNextVersionChannelRootRulesPO">
+        insert into t_channel_root_rules
+            (tid, username, password, version, delete_flag)
+        values (null, #{channelRootRulesVo.username}, #{channelRootRulesVo.password}, #{nextVersion}, 'N');
+    </insert>
+
+    <select id="queryVersion" resultType="java.lang.String">
+        select distinct version
+        from t_channel_root_rules
+        limit 10
+    </select>
+
+
+    <select id="rollBackVersion" resultType="com.skf.dao.po.ChannelRootRulesPO">
+        select *
+        from t_channel_root_rules
+        where version = #{version}
+    </select>
+
+
+    <!--    <select id="queryLastVersionChannelRootRulesPO" resultType="com.skf.dao.po.ChannelRootRulesPO">-->
+<!--        select * -->
+<!--        from t_channel_root_rules-->
+<!--        where version = #{}-->
+<!--    </select>-->
+
+</mapper>
